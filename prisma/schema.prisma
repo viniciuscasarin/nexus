@@ -1,0 +1,42 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PersonalInfo {
+  id       Int     @id @default(autoincrement())
+  fullName String
+  email    String
+  phone    String?
+  location String?
+  summary  String?
+}
+
+model Experience {
+  id           Int       @id @default(autoincrement())
+  company      String
+  position     String
+  startDate    String?
+  endDate      String?
+  current      Boolean   @default(false)
+  description  String
+}
+
+model Education {
+  id           Int       @id @default(autoincrement())
+  institution  String
+  degree       String
+  fieldOfStudy String?
+  startDate    String?
+  endDate      String?
+}
+
+model Skill {
+  id    Int    @id @default(autoincrement())
+  name  String
+  level String?
+}
