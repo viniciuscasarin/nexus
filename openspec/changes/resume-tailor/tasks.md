@@ -14,10 +14,10 @@
 
 - [x] 3.1 Create the UI component for pasting a job description and verify the text state is captured.
 - [x] 3.2 Implement the AI analysis service layer using the Gemini SDK to compare the job against the master data and verify it returns a structured JSON response (missing skills, score).
-- [ ] 3.3 Integrate the analysis service with the UI to display the compatibility results and verify the frontend shows the correct score and missing skills.
+- [x] 3.3 Integrate the analysis service with the UI to display the compatibility results and verify the frontend shows the correct score and missing skills.
 
 ## 4. Tailored Resume Generation (resume-generation)
 
-- [ ] 4.1 Implement the AI generation service that takes the job description and master data to output a tailored JSON resume and verify it returns valid structured data.
-- [ ] 4.2 Create the high-fidelity UI layout for the tailored resume (preview screen) and verify it maps the AI output correctly to the design.
-- [ ] 4.3 Add the print/export functionality using CSS `@media print` and verify that triggering print hides the application chrome and only shows the resume pages.
+- [x] 4.1 Implement the AI generation service that takes the job description and master data to output a tailored JSON resume and verify it returns valid structured data.
+- [x] 4.2 Create the high-fidelity UI layout for the tailored resume (preview screen) and verify it maps the AI output correctly to the design.
+- [x] 4.3 Add the print/export functionality using CSS `@media print` and verify that triggering print hides the application chrome and only shows the resume pages.
