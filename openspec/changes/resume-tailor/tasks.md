@@ -13,7 +13,7 @@
 ## 3. Job Analysis (job-analysis)
 
 - [x] 3.1 Create the UI component for pasting a job description and verify the text state is captured.
-- [ ] 3.2 Implement the AI analysis service layer using the Gemini SDK to compare the job against the master data and verify it returns a structured JSON response (missing skills, score).
+- [x] 3.2 Implement the AI analysis service layer using the Gemini SDK to compare the job against the master data and verify it returns a structured JSON response (missing skills, score).
 - [ ] 3.3 Integrate the analysis service with the UI to display the compatibility results and verify the frontend shows the correct score and missing skills.
 
 ## 4. Tailored Resume Generation (resume-generation)
