@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,11 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
+import { saveMasterResume } from "@/app/actions/resume";
 
-export function MasterForm() {
+export function MasterForm({ initialData }: { initialData?: MasterResumeFormValues | null }) {
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof masterResumeSchema>>({
     resolver: zodResolver(masterResumeSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       personalInfo: { fullName: "", email: "", phone: "", location: "", summary: "" },
       experiences: [],
       educations: [],
@@ -37,8 +41,15 @@ export function MasterForm() {
   });
 
   const onSubmit = (data: z.infer<typeof masterResumeSchema>) => {
-    console.log(data);
-    // TODO: implement save logic
+    startTransition(async () => {
+      try {
+        await saveMasterResume(data);
+        alert("Resume data saved successfully!");
+      } catch (error) {
+        console.error("Failed to save resume", error);
+        alert("Failed to save resume data. See console for details.");
+      }
+    });
   };
 
   return (
@@ -190,7 +201,9 @@ export function MasterForm() {
       </Card>
 
       <div className="flex justify-end gap-4">
-        <Button type="submit">Save Resume Data</Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "Saving..." : "Save Resume Data"}
+        </Button>
       </div>
     </form>
   );
