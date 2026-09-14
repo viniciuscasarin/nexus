@@ -7,7 +7,7 @@
 ## 2. Master Data Management (resume-master-data)
 
 - [x] 2.1 Create the Prisma models for PersonalInfo, Experience, Education, and Skills, then verify the local SQLite db has these tables.
-- [ ] 2.2 Implement the `react-hook-form` Master Form UI with `zod` validation and verify it renders without errors.
+- [x] 2.2 Implement the `react-hook-form` Master Form UI with `zod` validation and verify it renders without errors.
 - [ ] 2.3 Implement the Next.js server actions or API routes to save and load master data, then verify data persists in SQLite upon form submission.
 
 ## 3. Job Analysis (job-analysis)

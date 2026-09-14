@@ -1,3 +1,4 @@
+// @ts-expect-error Prisma config types might be missing
 import { definePrismaConfig } from "prisma/config";
 
 export default definePrismaConfig({
