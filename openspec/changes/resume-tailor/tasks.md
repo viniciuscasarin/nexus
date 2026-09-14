@@ -8,11 +8,11 @@
 
 - [x] 2.1 Create the Prisma models for PersonalInfo, Experience, Education, and Skills, then verify the local SQLite db has these tables.
 - [x] 2.2 Implement the `react-hook-form` Master Form UI with `zod` validation and verify it renders without errors.
-- [ ] 2.3 Implement the Next.js server actions or API routes to save and load master data, then verify data persists in SQLite upon form submission.
+- [x] 2.3 Implement the Next.js server actions or API routes to save and load master data, then verify data persists in SQLite upon form submission.
 
 ## 3. Job Analysis (job-analysis)
 
-- [ ] 3.1 Create the UI component for pasting a job description and verify the text state is captured.
+- [x] 3.1 Create the UI component for pasting a job description and verify the text state is captured.
 - [ ] 3.2 Implement the AI analysis service layer using the Gemini SDK to compare the job against the master data and verify it returns a structured JSON response (missing skills, score).
 - [ ] 3.3 Integrate the analysis service with the UI to display the compatibility results and verify the frontend shows the correct score and missing skills.
 
