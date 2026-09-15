@@ -44,8 +44,11 @@ ${jobDescription}
     });
 
     return object;
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Analysis failed:", error);
+    if (error?.message?.includes('503')) {
+      throw new Error("AI_MODEL_OVERLOADED");
+    }
     throw new Error("Failed to analyze job description.");
   }
 }

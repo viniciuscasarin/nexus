@@ -94,7 +94,16 @@ export function JobAnalysis() {
       setIsGenerationModalOpen(false);
       toast.success("Resume generated successfully!");
     } catch (err: any) {
-      toast.error(err.message || "An error occurred during generation.");
+      if (err.message?.includes("AI_MODEL_OVERLOADED")) {
+        toast.error("The AI model is currently overloaded.", {
+          action: {
+            label: "Retry",
+            onClick: () => handleGenerateAdhoc()
+          }
+        });
+      } else {
+        toast.error(err.message || "An error occurred during generation.");
+      }
     } finally {
       setIsGeneratingAdhoc(false);
     }
@@ -119,7 +128,16 @@ export function JobAnalysis() {
       setIsGenerationModalOpen(false);
       toast.success("Job saved and resume generated successfully!");
     } catch (err: any) {
-      toast.error(err.message || "An error occurred during generation and saving.");
+      if (err.message?.includes("AI_MODEL_OVERLOADED")) {
+        toast.error("The AI model is currently overloaded.", {
+          action: {
+            label: "Retry",
+            onClick: () => handleGenerateAndSave()
+          }
+        });
+      } else {
+        toast.error(err.message || "An error occurred during generation and saving.");
+      }
     } finally {
       setIsGeneratingAndSaving(false);
     }
