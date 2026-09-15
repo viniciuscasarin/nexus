@@ -40,3 +40,12 @@ model Skill {
   name  String
   level String?
 }
+
+model SavedJob {
+  id             Int      @id @default(autoincrement())
+  title          String
+  company        String
+  description    String
+  analysisResult String
+  createdAt      DateTime @default(now())
+}

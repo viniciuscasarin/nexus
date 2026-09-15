@@ -1,6 +1,6 @@
 ## 1. Database & Backend
 
-- [ ] 1.1 Add `SavedJob` model to `schema.prisma` and run `npx prisma db push`, verifying the database reflects the new table.
+- [x] 1.1 Add `SavedJob` model to `schema.prisma` and run `npx prisma db push`, verifying the database reflects the new table.
 - [ ] 1.2 Create server actions in `src/app/actions/job-history.ts` for saving a job and fetching all saved jobs, verifying they compile without type errors.
 
 ## 2. Layout & Routing
