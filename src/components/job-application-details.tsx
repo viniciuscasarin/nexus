@@ -15,6 +15,7 @@ import { Loader2, FileText, Wand2, ExternalLink, Send } from "lucide-react";
 import { generateTailoredResume } from "@/app/actions/generate";
 import { addComment } from "@/app/actions/job-application";
 import { TailoredResumeView } from "./tailored-resume";
+import { toast } from "sonner";
 
 export function JobApplicationDetails({
   job,
@@ -50,7 +51,16 @@ export function JobApplicationDetails({
       // Ideally we would update the job state to show the resume, but a refresh works too
       window.location.reload();
     } catch (err: any) {
-      setError(err.message || "Failed to generate resume");
+      if (err.message?.includes("AI_MODEL_OVERLOADED")) {
+        toast.error("The AI model is currently overloaded.", {
+          action: {
+            label: "Retry",
+            onClick: () => handleGenerate()
+          }
+        });
+      } else {
+        setError(err.message || "Failed to generate resume");
+      }
     } finally {
       setIsGenerating(false);
     }

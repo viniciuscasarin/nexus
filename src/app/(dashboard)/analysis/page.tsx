@@ -1,6 +1,11 @@
 import { JobAnalysis } from "@/components/job-analysis";
 import { PageContainer } from "@/components/page-container";
 import { PageHeader } from "@/components/page-header";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Job Analysis",
+};
 
 export default function AnalysisPage() {
   return (

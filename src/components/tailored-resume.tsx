@@ -24,7 +24,7 @@ export function TailoredResumeView({ resume }: TailoredResumeViewProps) {
       <div className="resume-container bg-white text-black p-8 max-w-4xl mx-auto shadow-sm border rounded-sm font-sans">
         {/* Header */}
         <header className="text-center mb-6">
-          <h1 className="text-3xl font-bold mb-1">{resume.personalInfo.name}</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-1">{resume.personalInfo.name}</h1>
           <div className="text-sm text-gray-600 flex flex-wrap justify-center gap-2">
             {resume.personalInfo.email && <span>{resume.personalInfo.email}</span>}
             {resume.personalInfo.phone && <span>• {resume.personalInfo.phone}</span>}
@@ -65,12 +65,12 @@ export function TailoredResumeView({ resume }: TailoredResumeViewProps) {
         {/* Experience */}
         {resume.experience.length > 0 && (
           <section className="mb-6">
-            <h2 className="text-lg font-bold uppercase border-b border-gray-300 mb-3 pb-1">Experience</h2>
+            <h2 className="text-xl font-bold mb-4 uppercase border-b border-gray-300 pb-1">Experience</h2>
             <div className="space-y-4">
               {resume.experience.map((exp, i) => (
                 <div key={i}>
                   <div className="flex justify-between items-baseline mb-1">
-                    <h3 className="font-bold">{exp.position}</h3>
+                    <h3 className="font-semibold text-lg">{exp.position}</h3>
                     <span className="text-sm text-gray-600 font-medium">
                       {exp.startDate} - {exp.endDate}
                     </span>
@@ -93,12 +93,12 @@ export function TailoredResumeView({ resume }: TailoredResumeViewProps) {
         {/* Education */}
         {resume.education.length > 0 && (
           <section className="mb-6">
-            <h2 className="text-lg font-bold uppercase border-b border-gray-300 mb-3 pb-1">Education</h2>
+            <h2 className="text-xl font-bold mb-4 uppercase border-b border-gray-300 pb-1">Education</h2>
             <div className="space-y-4">
               {resume.education.map((edu, i) => (
                 <div key={i}>
                   <div className="flex justify-between items-baseline mb-1">
-                    <h3 className="font-bold">{edu.institution}</h3>
+                    <h3 className="font-semibold text-lg">{edu.institution}</h3>
                     <span className="text-sm text-gray-600 font-medium">
                       {edu.startDate} - {edu.endDate}
                     </span>
@@ -115,7 +115,7 @@ export function TailoredResumeView({ resume }: TailoredResumeViewProps) {
         {/* Skills */}
         {resume.skills.length > 0 && (
           <section className="mb-6">
-            <h2 className="text-lg font-bold uppercase border-b border-gray-300 mb-3 pb-1">Skills</h2>
+            <h2 className="text-xl font-bold mb-4 uppercase border-b border-gray-300 pb-1">Skills</h2>
             <div className="text-sm flex flex-wrap gap-x-4 gap-y-2">
               {/* Simple grouping could be done here, for now just list them */}
               {Array.from(new Set(resume.skills.map(s => s.category))).map(category => (

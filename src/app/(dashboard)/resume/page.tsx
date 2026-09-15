@@ -2,6 +2,11 @@ import { MasterForm } from "@/components/master-form";
 import { loadMasterResume } from "@/app/actions/resume";
 import { PageContainer } from "@/components/page-container";
 import { PageHeader } from "@/components/page-header";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Resume Data",
+};
 
 export default async function ResumePage() {
   const initialData = await loadMasterResume();

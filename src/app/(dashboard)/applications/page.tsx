@@ -3,6 +3,11 @@ import { NewApplicationModal } from "@/components/new-application-modal";
 import { KanbanBoard } from "@/components/kanban-board";
 import { PageContainer } from "@/components/page-container";
 import { PageHeader } from "@/components/page-header";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Applications",
+};
 
 export default async function ApplicationsPage() {
   const applications = await getJobApplications();

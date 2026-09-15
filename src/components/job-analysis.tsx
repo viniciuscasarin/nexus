@@ -75,7 +75,16 @@ export function JobAnalysis() {
       const analysisResult = await analyzeJob(jobDescription, modelId);
       setResult(analysisResult);
     } catch (err: any) {
-      toast.error(err.message || "An error occurred during analysis.");
+      if (err.message?.includes("AI_MODEL_OVERLOADED")) {
+        toast.error("The AI model is currently overloaded.", {
+          action: {
+            label: "Retry",
+            onClick: () => handleAnalyze()
+          }
+        });
+      } else {
+        toast.error(err.message || "An error occurred during analysis.");
+      }
     } finally {
       setIsAnalyzing(false);
     }
@@ -172,7 +181,7 @@ export function JobAnalysis() {
             placeholder="Paste job description here..."
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
-            className="flex-1 min-h-[250px] lg:h-[calc(100vh-350px)] resize-none"
+            className="flex-1 min-h-[250px] lg:h-[calc(100vh-350px)] resize-none overflow-y-auto"
           />
           
           <div className="pt-2 shrink-0">

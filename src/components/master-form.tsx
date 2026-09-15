@@ -7,13 +7,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { masterResumeSchema, MasterResumeFormValues } from "@/lib/validations/resume";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { saveMasterResume } from "@/app/actions/resume";
 
 export function MasterForm({ initialData }: { initialData?: MasterResumeFormValues | null }) {
   const [isPending, startTransition] = useTransition();
+  const [showPersonalInfo, setShowPersonalInfo] = useState(true);
+  const [showExperience, setShowExperience] = useState(true);
+  const [showEducation, setShowEducation] = useState(true);
+  const [showSkills, setShowSkills] = useState(true);
 
   const form = useForm<z.infer<typeof masterResumeSchema>>({
     resolver: zodResolver(masterResumeSchema),
@@ -55,9 +60,15 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-4xl mx-auto py-8">
       <Card>
-        <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowPersonalInfo(!showPersonalInfo)}>
+            <CardTitle>Personal Information</CardTitle>
+            <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+              {showPersonalInfo ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </Button>
+          </div>
         </CardHeader>
+        {showPersonalInfo && (
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -85,19 +96,26 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
           </div>
           <div className="space-y-2">
             <Label htmlFor="summary">Professional Summary</Label>
-            <Input id="summary" {...form.register("personalInfo.summary")} />
+            <Textarea id="summary" className="resize-y" {...form.register("personalInfo.summary")} />
           </div>
         </CardContent>
+        )}
       </Card>
 
       {/* Experience Section */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Experience</CardTitle>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowExperience(!showExperience)}>
+            <CardTitle>Experience</CardTitle>
+            <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+              {showExperience ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </Button>
+          </div>
           <Button type="button" variant="outline" size="sm" onClick={() => appendExp({ company: "", position: "", current: false, description: "" })}>
             <Plus className="w-4 h-4 mr-2" /> Add Experience
           </Button>
         </CardHeader>
+        {showExperience && (
         <CardContent className="space-y-6">
           {expFields.map((field, index) => (
             <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
@@ -130,7 +148,7 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
               </div>
               <div className="space-y-2">
                 <Label>Description</Label>
-                <Input {...form.register(`experiences.${index}.description`)} />
+                <Textarea className="resize-y" {...form.register(`experiences.${index}.description`)} />
                 {form.formState.errors.experiences?.[index]?.description && (
                   <p className="text-sm text-red-500">{form.formState.errors.experiences[index]?.description?.message}</p>
                 )}
@@ -138,16 +156,23 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
             </div>
           ))}
         </CardContent>
+        )}
       </Card>
 
       {/* Education Section */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Education</CardTitle>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowEducation(!showEducation)}>
+            <CardTitle>Education</CardTitle>
+            <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+              {showEducation ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </Button>
+          </div>
           <Button type="button" variant="outline" size="sm" onClick={() => appendEdu({ institution: "", degree: "" })}>
             <Plus className="w-4 h-4 mr-2" /> Add Education
           </Button>
         </CardHeader>
+        {showEducation && (
         <CardContent className="space-y-6">
           {eduFields.map((field, index) => (
             <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
@@ -171,16 +196,23 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
             </div>
           ))}
         </CardContent>
+        )}
       </Card>
 
       {/* Skills Section */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Skills</CardTitle>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowSkills(!showSkills)}>
+            <CardTitle>Skills</CardTitle>
+            <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+              {showSkills ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </Button>
+          </div>
           <Button type="button" variant="outline" size="sm" onClick={() => appendSkill({ name: "" })}>
             <Plus className="w-4 h-4 mr-2" /> Add Skill
           </Button>
         </CardHeader>
+        {showSkills && (
         <CardContent className="space-y-6">
           {skillFields.map((field, index) => (
             <div key={field.id} className="flex gap-4 items-end relative">
@@ -198,6 +230,7 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
             </div>
           ))}
         </CardContent>
+        )}
       </Card>
 
       <div className="flex justify-end gap-4">
