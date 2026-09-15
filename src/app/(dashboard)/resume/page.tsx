@@ -1,13 +1,18 @@
 import { MasterForm } from "@/components/master-form";
 import { loadMasterResume } from "@/app/actions/resume";
+import { PageContainer } from "@/components/page-container";
+import { PageHeader } from "@/components/page-header";
 
 export default async function ResumePage() {
   const initialData = await loadMasterResume();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <h1 className="text-4xl font-bold mb-8">Resume Master Data</h1>
+    <PageContainer variant="default">
+      <PageHeader 
+        title="Resume Master Data" 
+        description="Manage your comprehensive professional history and skills."
+      />
       <MasterForm initialData={initialData} />
-    </div>
+    </PageContainer>
   );
 }

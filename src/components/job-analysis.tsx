@@ -144,14 +144,15 @@ export function JobAnalysis() {
   };
 
   return (
-    <div className="space-y-8">
-      <Card className="mt-8 print:hidden">
-        <CardHeader>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      {/* Left Column: Input Form */}
+      <Card className="print:hidden flex flex-col h-full lg:min-h-[calc(100vh-250px)]">
+        <CardHeader className="shrink-0">
           <CardTitle>Job Description Analysis</CardTitle>
           <CardDescription>Paste the job description below to analyze compatibility with your master resume.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col space-y-1.5">
+        <CardContent className="space-y-4 flex-1 flex flex-col">
+          <div className="flex flex-col space-y-1.5 shrink-0">
             <Label htmlFor="model">AI Model</Label>
             <Select value={modelId} onValueChange={(val) => val && setModelId(val)} disabled={isLoadingModels || models.length === 0}>
               <SelectTrigger id="model">
@@ -171,15 +172,26 @@ export function JobAnalysis() {
             placeholder="Paste job description here..."
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
-            rows={10}
+            className="flex-1 min-h-[250px] lg:h-[calc(100vh-350px)] resize-none"
           />
-          <Button onClick={handleAnalyze} disabled={!jobDescription.trim() || !modelId || isAnalyzing || isGeneratingAdhoc || isGeneratingAndSaving}>
-            {isAnalyzing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Analyze Compatibility
-          </Button>
+          
+          <div className="pt-2 shrink-0">
+            <Button onClick={handleAnalyze} className="w-full" disabled={!jobDescription.trim() || !modelId || isAnalyzing || isGeneratingAdhoc || isGeneratingAndSaving}>
+              {isAnalyzing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Analyze Compatibility
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-          {result && (
-            <div className="mt-6 space-y-4 border-t pt-4">
+      {/* Right Column: Analysis Results & Resume Actions */}
+      <div className="space-y-6">
+        {result ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Analysis Results</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div>
                 <h3 className="font-semibold text-lg">Compatibility Score: <span className={result.score >= 70 ? "text-green-600" : "text-amber-600"}>{result.score}/100</span></h3>
               </div>
@@ -200,13 +212,13 @@ export function JobAnalysis() {
                 <p className="text-sm mt-1">{result.reasoning}</p>
               </div>
               
-              <div className="pt-4 border-t flex gap-4">
+              <div className="pt-4 border-t flex flex-col gap-4">
                 <Dialog open={isGenerationModalOpen} onOpenChange={setIsGenerationModalOpen}>
-                  <DialogTrigger render={
-                    <Button disabled={isGeneratingAdhoc || isGeneratingAndSaving} />
-                  }>
-                    {(isGeneratingAdhoc || isGeneratingAndSaving) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Generate Tailored Resume
+                  <DialogTrigger asChild>
+                    <Button disabled={isGeneratingAdhoc || isGeneratingAndSaving} className="w-full">
+                      {(isGeneratingAdhoc || isGeneratingAndSaving) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Generate Tailored Resume
+                    </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -276,15 +288,31 @@ export function JobAnalysis() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {tailoredResume && (
-        <TailoredResumeView resume={tailoredResume} />
-      )}
+                {tailoredResume && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" className="w-full">
+                        View Generated Resume
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>Tailored Resume</DialogTitle>
+                      </DialogHeader>
+                      <TailoredResumeView resume={tailoredResume} />
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="h-[250px] flex items-center justify-center text-muted-foreground border-dashed">
+            <p>Analysis results will appear here</p>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
