@@ -72,19 +72,42 @@ const TailoredResumeSchema = z.object({
   })),
 });
 
-export async function generateTailoredResume(jobApplicationId: number, modelId: string) {
+export async function generateTailoredResume({
+  jobApplicationId,
+  jobDescription,
+  modelId,
+  language,
+}: {
+  jobApplicationId?: number;
+  jobDescription?: string;
+  modelId: string;
+  language?: string;
+}) {
   const masterData = await loadMasterResume();
   if (!masterData) {
     throw new Error("No master resume data found. Please complete your master resume first.");
   }
 
-  const jobApplication = await prisma.jobApplication.findUnique({
-    where: { id: jobApplicationId }
-  });
+  let finalJobDescription = jobDescription;
 
-  if (!jobApplication) {
-    throw new Error("Job application not found.");
+  if (jobApplicationId) {
+    const jobApplication = await prisma.jobApplication.findUnique({
+      where: { id: jobApplicationId }
+    });
+
+    if (!jobApplication) {
+      throw new Error("Job application not found.");
+    }
+    finalJobDescription = jobApplication.description || jobDescription;
   }
+
+  if (!finalJobDescription) {
+    throw new Error("A job description must be provided either directly or via a job application.");
+  }
+
+  const languageInstruction = language 
+    ? `\n4. IMPORTANT: Keep all JSON keys exactly as defined in the schema (in English), but translate all the string values into ${language}. The final resume content MUST be written entirely in ${language}.`
+    : '';
 
   const prompt = `
 You are an expert technical resume writer.
@@ -94,13 +117,13 @@ Generate a highly tailored and optimized resume for this specific job descriptio
 Rules:
 1. DO NOT invent any new experiences, jobs, degrees, or skills that are not present in the master resume.
 2. Select and highlight the most relevant experiences and skills for the job description.
-3. You may rephrase bullet points to emphasize impact and relevance to the job description, but do not exaggerate or lie.
+3. You may rephrase bullet points to emphasize impact and relevance to the job description, but do not exaggerate or lie.${languageInstruction}
 
 Master Resume:
 ${JSON.stringify(masterData, null, 2)}
 
 Job Description:
-${jobApplication.description}
+${finalJobDescription}
 `;
 
   try {
@@ -111,16 +134,18 @@ ${jobApplication.description}
       prompt,
     });
 
-    const tailoredResume = await prisma.tailoredResume.create({
-      data: {
-        content: JSON.stringify(object),
-      }
-    });
+    if (jobApplicationId) {
+      const tailoredResume = await prisma.tailoredResume.create({
+        data: {
+          content: JSON.stringify(object),
+        }
+      });
 
-    await prisma.jobApplication.update({
-      where: { id: jobApplicationId },
-      data: { tailoredResumeId: tailoredResume.id }
-    });
+      await prisma.jobApplication.update({
+        where: { id: jobApplicationId },
+        data: { tailoredResumeId: tailoredResume.id }
+      });
+    }
 
     return object;
   } catch (error) {

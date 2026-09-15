@@ -46,7 +46,7 @@ export function JobApplicationDetails({
       }
       
       const firstModel = models[0].id;
-      await generateTailoredResume(job!.id, firstModel);
+      await generateTailoredResume({ jobApplicationId: job!.id, modelId: firstModel });
       // Ideally we would update the job state to show the resume, but a refresh works too
       window.location.reload();
     } catch (err: any) {

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeJob, JobAnalysisResult } from "@/app/actions/analyze";
 import { generateTailoredResume, TailoredResume } from "@/app/actions/generate";
+import { toast } from "sonner";
+import { createJobApplication } from "@/app/actions/job-application";
 
 import { getAvailableModels, AvailableModel } from "@/app/actions/models";
 import { Loader2 } from "lucide-react";
@@ -36,15 +38,15 @@ export function JobAnalysis() {
   const [modelId, setModelId] = useState<string>("");
   const [isLoadingModels, setIsLoadingModels] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<JobAnalysisResult | null>(null);
   const [tailoredResume, setTailoredResume] = useState<TailoredResume | null>(null);
-  const [error, setError] = useState<string | null>(null);
   
-  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
+  const [generationLanguage, setGenerationLanguage] = useState("English");
   const [jobTitle, setJobTitle] = useState("");
   const [company, setCompany] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const [isGeneratingAdhoc, setIsGeneratingAdhoc] = useState(false);
+  const [isGeneratingAndSaving, setIsGeneratingAndSaving] = useState(false);
 
   useEffect(() => {
     async function fetchModels() {
@@ -52,7 +54,8 @@ export function JobAnalysis() {
         const availableModels = await getAvailableModels();
         setModels(availableModels);
         if (availableModels.length > 0) {
-          setModelId(availableModels[0].id);
+          const defaultModel = availableModels.find(m => m.id.includes('gemini-3')) || availableModels[0];
+          setModelId(defaultModel.id);
         }
       } catch (err) {
         console.error("Failed to fetch models", err);
@@ -66,41 +69,59 @@ export function JobAnalysis() {
   const handleAnalyze = async () => {
     if (!modelId) return;
     setIsAnalyzing(true);
-    setError(null);
     setResult(null);
     setTailoredResume(null);
     try {
       const analysisResult = await analyzeJob(jobDescription, modelId);
       setResult(analysisResult);
     } catch (err: any) {
-      setError(err.message || "An error occurred during analysis.");
+      toast.error(err.message || "An error occurred during analysis.");
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  const handleGenerate = async () => {
+  const handleGenerateAdhoc = async () => {
     if (!modelId) return;
-    setIsGenerating(true);
-    setError(null);
+    setIsGeneratingAdhoc(true);
     try {
-      const resumeResult = await generateTailoredResume(0, modelId);
+      const resumeResult = await generateTailoredResume({ 
+        jobDescription, 
+        modelId, 
+        language: generationLanguage 
+      });
       setTailoredResume(resumeResult as any);
+      setIsGenerationModalOpen(false);
+      toast.success("Resume generated successfully!");
     } catch (err: any) {
-      setError(err.message || "An error occurred during generation.");
+      toast.error(err.message || "An error occurred during generation.");
     } finally {
-      setIsGenerating(false);
+      setIsGeneratingAdhoc(false);
     }
   };
 
-  const handleSave = async () => {
-    if (!result) return;
-    setIsSaving(true);
+  const handleGenerateAndSave = async () => {
+    if (!modelId || !jobTitle || !company) return;
+    setIsGeneratingAndSaving(true);
     try {
+      const jobApp = await createJobApplication({
+        title: jobTitle,
+        company: company,
+        description: jobDescription,
+      });
+
+      const resumeResult = await generateTailoredResume({ 
+        jobApplicationId: jobApp.id,
+        modelId, 
+        language: generationLanguage 
+      });
+      setTailoredResume(resumeResult as any);
+      setIsGenerationModalOpen(false);
+      toast.success("Job saved and resume generated successfully!");
     } catch (err: any) {
-      setError(err.message || "Failed to save job.");
+      toast.error(err.message || "An error occurred during generation and saving.");
     } finally {
-      setIsSaving(false);
+      setIsGeneratingAndSaving(false);
     }
   };
 
@@ -134,14 +155,10 @@ export function JobAnalysis() {
             onChange={(e) => setJobDescription(e.target.value)}
             rows={10}
           />
-          <Button onClick={handleAnalyze} disabled={!jobDescription.trim() || !modelId || isAnalyzing || isGenerating}>
+          <Button onClick={handleAnalyze} disabled={!jobDescription.trim() || !modelId || isAnalyzing || isGeneratingAdhoc || isGeneratingAndSaving}>
             {isAnalyzing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Analyze Compatibility
           </Button>
-
-          {error && (
-            <div className="text-red-500 text-sm mt-2">{error}</div>
-          )}
 
           {result && (
             <div className="mt-6 space-y-4 border-t pt-4">
@@ -166,24 +183,38 @@ export function JobAnalysis() {
               </div>
               
               <div className="pt-4 border-t flex gap-4">
-                <Button onClick={handleGenerate} disabled={isGenerating}>
-                  {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Generate Tailored Resume
-                </Button>
-
-                <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
-                  <DialogTrigger render={<Button variant="outline" />}>
-                    Save to History
+                <Dialog open={isGenerationModalOpen} onOpenChange={setIsGenerationModalOpen}>
+                  <DialogTrigger render={
+                    <Button disabled={isGeneratingAdhoc || isGeneratingAndSaving} />
+                  }>
+                    {(isGeneratingAdhoc || isGeneratingAndSaving) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Generate Tailored Resume
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Save Job Analysis</DialogTitle>
+                      <DialogTitle>Generate Tailored Resume</DialogTitle>
                       <DialogDescription>
-                        Save this job and its compatibility analysis for future reference.
+                        Configure your resume generation. You can generate it ad-hoc or save the job to your board.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="language" className="text-right">
+                          Language
+                        </Label>
+                        <Select value={generationLanguage} onValueChange={(val) => val && setGenerationLanguage(val)}>
+                          <SelectTrigger id="language" className="col-span-3">
+                            <SelectValue placeholder="Select language" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="English">English</SelectItem>
+                            <SelectItem value="Portuguese">Portuguese</SelectItem>
+                            <SelectItem value="Spanish">Spanish</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4 mt-2">
+                        <div className="col-span-4 text-sm text-gray-500 mb-2">Optional: Save job to Kanban board</div>
                         <Label htmlFor="title" className="text-right">
                           Job Title
                         </Label>
@@ -192,6 +223,7 @@ export function JobAnalysis() {
                           value={jobTitle}
                           onChange={(e) => setJobTitle(e.target.value)}
                           className="col-span-3"
+                          placeholder="e.g. Software Engineer"
                         />
                       </div>
                       <div className="grid grid-cols-4 items-center gap-4">
@@ -203,13 +235,25 @@ export function JobAnalysis() {
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
                           className="col-span-3"
+                          placeholder="e.g. Acme Corp"
                         />
                       </div>
                     </div>
-                    <DialogFooter>
-                      <Button onClick={handleSave} disabled={!jobTitle || !company || isSaving}>
-                        {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Save Job
+                    <DialogFooter className="flex-col sm:flex-row gap-2">
+                      <Button 
+                        variant="outline" 
+                        onClick={handleGenerateAdhoc} 
+                        disabled={isGeneratingAdhoc || isGeneratingAndSaving}
+                      >
+                        {isGeneratingAdhoc && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Generate without saving
+                      </Button>
+                      <Button 
+                        onClick={handleGenerateAndSave} 
+                        disabled={!jobTitle || !company || isGeneratingAdhoc || isGeneratingAndSaving}
+                      >
+                        {isGeneratingAndSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Generate and save
                       </Button>
                     </DialogFooter>
                   </DialogContent>

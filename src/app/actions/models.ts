@@ -106,6 +106,7 @@ export const getAvailableModels = unstable_cache(
 );
 
 export async function getModel(modelId: string) {
+
   if (modelId.startsWith('gemini')) {
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
