@@ -41,11 +41,22 @@ model Skill {
   level String?
 }
 
-model SavedJob {
-  id             Int      @id @default(autoincrement())
-  title          String
-  company        String
-  description    String
-  analysisResult String
-  createdAt      DateTime @default(now())
+model JobApplication {
+  id               Int             @id @default(autoincrement())
+  title            String
+  company          String
+  link             String?
+  description      String
+  status           String          @default("INTERESSADO")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  tailoredResumeId Int?
+  tailoredResume   TailoredResume? @relation(fields: [tailoredResumeId], references: [id])
+}
+
+model TailoredResume {
+  id              Int              @id @default(autoincrement())
+  content         String
+  createdAt       DateTime         @default(now())
+  jobApplications JobApplication[]
 }

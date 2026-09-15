@@ -1,7 +1,7 @@
 ## 1. Schema and Setup
 
 - [x] 1.1 Add `@dnd-kit/core` and related packages (`@dnd-kit/utilities`, `@dnd-kit/sortable`) to dependencies and verify installation succeeds
-- [ ] 1.2 Update Prisma schema to replace `SavedJob` with `JobApplication` and `TailoredResume` models, and run `prisma migrate dev` to verify the DB migration
+- [x] 1.2 Update Prisma schema to replace `SavedJob` with `JobApplication` and `TailoredResume` models, and run `prisma migrate dev` to verify the DB migration
 
 ## 2. API and Backend Updates
 
