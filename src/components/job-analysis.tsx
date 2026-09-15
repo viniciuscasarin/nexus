@@ -7,8 +7,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { analyzeJob, JobAnalysisResult } from "@/app/actions/analyze";
 import { generateTailoredResume, TailoredResume } from "@/app/actions/generate";
 import { saveJob } from "@/app/actions/job-history";
+import { getAvailableModels, AvailableModel } from "@/app/actions/models";
 import { Loader2 } from "lucide-react";
 import { TailoredResumeView } from "./tailored-resume";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -20,9 +28,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useEffect } from "react";
 
 export function JobAnalysis() {
   const [jobDescription, setJobDescription] = useState("");
+  const [models, setModels] = useState<AvailableModel[]>([]);
+  const [modelId, setModelId] = useState<string>("");
+  const [isLoadingModels, setIsLoadingModels] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<JobAnalysisResult | null>(null);
@@ -34,13 +46,31 @@ export function JobAnalysis() {
   const [company, setCompany] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  useEffect(() => {
+    async function fetchModels() {
+      try {
+        const availableModels = await getAvailableModels();
+        setModels(availableModels);
+        if (availableModels.length > 0) {
+          setModelId(availableModels[0].id);
+        }
+      } catch (err) {
+        console.error("Failed to fetch models", err);
+      } finally {
+        setIsLoadingModels(false);
+      }
+    }
+    fetchModels();
+  }, []);
+
   const handleAnalyze = async () => {
+    if (!modelId) return;
     setIsAnalyzing(true);
     setError(null);
     setResult(null);
     setTailoredResume(null);
     try {
-      const analysisResult = await analyzeJob(jobDescription);
+      const analysisResult = await analyzeJob(jobDescription, modelId);
       setResult(analysisResult);
     } catch (err: any) {
       setError(err.message || "An error occurred during analysis.");
@@ -50,10 +80,11 @@ export function JobAnalysis() {
   };
 
   const handleGenerate = async () => {
+    if (!modelId) return;
     setIsGenerating(true);
     setError(null);
     try {
-      const resumeResult = await generateTailoredResume(jobDescription);
+      const resumeResult = await generateTailoredResume(jobDescription, modelId);
       setTailoredResume(resumeResult);
     } catch (err: any) {
       setError(err.message || "An error occurred during generation.");
@@ -88,13 +119,29 @@ export function JobAnalysis() {
           <CardDescription>Paste the job description below to analyze compatibility with your master resume.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="model">AI Model</Label>
+            <Select value={modelId} onValueChange={(val) => val && setModelId(val)} disabled={isLoadingModels || models.length === 0}>
+              <SelectTrigger id="model">
+                <SelectValue placeholder={isLoadingModels ? "Loading models..." : "Select an AI model"} />
+              </SelectTrigger>
+              <SelectContent>
+                {models.map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
           <Textarea
             placeholder="Paste job description here..."
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
             rows={10}
           />
-          <Button onClick={handleAnalyze} disabled={!jobDescription.trim() || isAnalyzing || isGenerating}>
+          <Button onClick={handleAnalyze} disabled={!jobDescription.trim() || !modelId || isAnalyzing || isGenerating}>
             {isAnalyzing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Analyze Compatibility
           </Button>
@@ -132,8 +179,8 @@ export function JobAnalysis() {
                 </Button>
 
                 <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline">Save to History</Button>
+                  <DialogTrigger render={<Button variant="outline" />}>
+                    Save to History
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
