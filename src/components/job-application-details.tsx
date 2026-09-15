@@ -39,8 +39,14 @@ export function JobApplicationDetails({
     setIsGenerating(true);
     setError(null);
     try {
-      // Hardcoded modelId for simplicity, or we could fetch available models
-      await generateTailoredResume(job!.id, "google:gemini-3.1-pro");
+      const { getAvailableModels } = await import("@/app/actions/models");
+      const models = await getAvailableModels();
+      if (!models || models.length === 0) {
+        throw new Error("No AI models available. Please check your API keys.");
+      }
+      
+      const firstModel = models[0].id;
+      await generateTailoredResume(job!.id, firstModel);
       // Ideally we would update the job state to show the resume, but a refresh works too
       window.location.reload();
     } catch (err: any) {

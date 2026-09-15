@@ -1,9 +1,4 @@
-# llm-provider-management Specification
-
-## Purpose
-Gerencia a configuração e listagem dinâmica de provedores de LLM (Google, OpenAI, Anthropic) baseados na presença de chaves de API no ambiente.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Listagem de provedores ativos
 The system SHALL list only the LLM providers and their corresponding models for which valid API keys are configured in the environment, by dynamically querying each provider's API to retrieve and validate the actual list of supported models.
