@@ -47,7 +47,7 @@ model JobApplication {
   company          String
   link             String?
   description      String
-  status           String          @default("INTERESSADO")
+  status           String          @default("INTERESTED")
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   tailoredResumeId Int?

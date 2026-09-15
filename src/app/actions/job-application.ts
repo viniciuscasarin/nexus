@@ -13,7 +13,7 @@ export async function createJobApplication(data: {
   const application = await prisma.jobApplication.create({
     data: {
       ...data,
-      status: data.status || "INTERESSADO",
+      status: data.status || "INTERESTED",
     },
   });
 

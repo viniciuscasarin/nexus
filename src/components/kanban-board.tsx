@@ -25,13 +25,13 @@ import { updateJobApplicationStatus } from "@/app/actions/job-application";
 import { JobApplicationDetails } from "./job-application-details";
 
 export const KANBAN_COLUMNS = [
-  "INTERESSADO",
-  "CANDIDATADO",
-  "TRIAGEM",
-  "ENTREVISTA",
-  "ETAPA FINAL",
-  "OFERTA",
-  "CONTRATADO",
+  "INTERESTED",
+  "APPLIED",
+  "SCREENING",
+  "INTERVIEW",
+  "FINAL STAGE",
+  "OFFER",
+  "HIRED",
 ];
 
 function SortableItem({ item, onClick }: { item: JobApplicationWithComments, onClick: () => void }) {
