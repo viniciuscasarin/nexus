@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { name: "Resume Data", href: "/resume", icon: FileText },
   { name: "Job Analysis", href: "/analysis", icon: Activity },
-  { name: "History", href: "/history", icon: History },
+  { name: "Applications", href: "/applications", icon: Activity },
 ];
 
 export function Sidebar() {

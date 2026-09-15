@@ -4,6 +4,7 @@ import { generateObject } from 'ai';
 import { z } from 'zod';
 import { loadMasterResume } from './resume';
 import { getModel } from './models';
+import { prisma } from '@/lib/prisma';
 
 export interface TailoredResume {
   personalInfo: {
@@ -71,10 +72,18 @@ const TailoredResumeSchema = z.object({
   })),
 });
 
-export async function generateTailoredResume(jobDescription: string, modelId: string): Promise<TailoredResume> {
+export async function generateTailoredResume(jobApplicationId: number, modelId: string) {
   const masterData = await loadMasterResume();
   if (!masterData) {
     throw new Error("No master resume data found. Please complete your master resume first.");
+  }
+
+  const jobApplication = await prisma.jobApplication.findUnique({
+    where: { id: jobApplicationId }
+  });
+
+  if (!jobApplication) {
+    throw new Error("Job application not found.");
   }
 
   const prompt = `
@@ -91,7 +100,7 @@ Master Resume:
 ${JSON.stringify(masterData, null, 2)}
 
 Job Description:
-${jobDescription}
+${jobApplication.description}
 `;
 
   try {
@@ -100,6 +109,17 @@ ${jobDescription}
       model,
       schema: TailoredResumeSchema,
       prompt,
+    });
+
+    const tailoredResume = await prisma.tailoredResume.create({
+      data: {
+        content: JSON.stringify(object),
+      }
+    });
+
+    await prisma.jobApplication.update({
+      where: { id: jobApplicationId },
+      data: { tailoredResumeId: tailoredResume.id }
     });
 
     return object;

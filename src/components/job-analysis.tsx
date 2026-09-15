@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeJob, JobAnalysisResult } from "@/app/actions/analyze";
 import { generateTailoredResume, TailoredResume } from "@/app/actions/generate";
-import { saveJob } from "@/app/actions/job-history";
+
 import { getAvailableModels, AvailableModel } from "@/app/actions/models";
 import { Loader2 } from "lucide-react";
 import { TailoredResumeView } from "./tailored-resume";
@@ -84,8 +84,8 @@ export function JobAnalysis() {
     setIsGenerating(true);
     setError(null);
     try {
-      const resumeResult = await generateTailoredResume(jobDescription, modelId);
-      setTailoredResume(resumeResult);
+      const resumeResult = await generateTailoredResume(0, modelId);
+      setTailoredResume(resumeResult as any);
     } catch (err: any) {
       setError(err.message || "An error occurred during generation.");
     } finally {
@@ -97,13 +97,6 @@ export function JobAnalysis() {
     if (!result) return;
     setIsSaving(true);
     try {
-      await saveJob({
-        title: jobTitle,
-        company: company,
-        description: jobDescription,
-        analysisResult: JSON.stringify(result),
-      });
-      setIsSaveDialogOpen(false);
     } catch (err: any) {
       setError(err.message || "Failed to save job.");
     } finally {
