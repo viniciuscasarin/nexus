@@ -25,3 +25,10 @@ The system SHALL allow users to record and view timestamped comments/notes on a 
 #### Scenario: User adds a new comment
 - **WHEN** the user submits a new comment text in the job application modal
 - **THEN** the comment is saved with the current timestamp and displayed in the application's comment history
+
+### Requirement: Drop job application
+The system SHALL allow users to move job applications that are no longer being considered into a "DROPPED" column.
+
+#### Scenario: User drops an application
+- **WHEN** the user drags a job application card into the "DROPPED" column
+- **THEN** the application status is updated to "DROPPED" and saved

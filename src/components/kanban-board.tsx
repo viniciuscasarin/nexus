@@ -32,6 +32,7 @@ export const KANBAN_COLUMNS = [
   "FINAL STAGE",
   "OFFER",
   "HIRED",
+  "DROPPED",
 ];
 
 function SortableItem({ item, onClick }: { item: JobApplicationWithComments, onClick: () => void }) {
