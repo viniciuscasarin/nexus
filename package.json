@@ -10,10 +10,14 @@
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.53",
+    "@ai-sdk/google": "^4.0.69",
+    "@ai-sdk/openai": "^4.0.66",
     "@base-ui/react": "^1.8.0",
     "@google/genai": "^2.22.0",
     "@hookform/resolvers": "^5.9.1",
     "@prisma/client": "^5.22.0",
+    "ai": "^7.0.100",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.3.0",
     "lucide-react": "^1.46.0",
