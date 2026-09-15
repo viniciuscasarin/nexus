@@ -23,6 +23,13 @@ export async function createJobApplication(data: {
 
 export async function getJobApplications() {
   const applications = await prisma.jobApplication.findMany({
+    include: {
+      comments: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -39,4 +46,16 @@ export async function updateJobApplicationStatus(id: number, status: string) {
 
   revalidatePath("/");
   return application;
+}
+
+export async function addComment(jobApplicationId: number, content: string) {
+  const comment = await prisma.comment.create({
+    data: {
+      content,
+      jobApplicationId,
+    },
+  });
+
+  revalidatePath("/");
+  return comment;
 }

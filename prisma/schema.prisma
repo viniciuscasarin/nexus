@@ -17,17 +17,17 @@ model PersonalInfo {
 }
 
 model Experience {
-  id           Int       @id @default(autoincrement())
-  company      String
-  position     String
-  startDate    String?
-  endDate      String?
-  current      Boolean   @default(false)
-  description  String
+  id          Int     @id @default(autoincrement())
+  company     String
+  position    String
+  startDate   String?
+  endDate     String?
+  current     Boolean @default(false)
+  description String
 }
 
 model Education {
-  id           Int       @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   institution  String
   degree       String
   fieldOfStudy String?
@@ -36,7 +36,7 @@ model Education {
 }
 
 model Skill {
-  id    Int    @id @default(autoincrement())
+  id    Int     @id @default(autoincrement())
   name  String
   level String?
 }
@@ -52,6 +52,7 @@ model JobApplication {
   updatedAt        DateTime        @updatedAt
   tailoredResumeId Int?
   tailoredResume   TailoredResume? @relation(fields: [tailoredResumeId], references: [id])
+  comments         Comment[]
 }
 
 model TailoredResume {
@@ -59,4 +60,12 @@ model TailoredResume {
   content         String
   createdAt       DateTime         @default(now())
   jobApplications JobApplication[]
+}
+
+model Comment {
+  id               Int            @id @default(autoincrement())
+  content          String
+  createdAt        DateTime       @default(now())
+  jobApplicationId Int
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
 }

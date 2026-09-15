@@ -18,3 +18,10 @@ The system SHALL allow users to move job applications between different status c
 #### Scenario: User moves application to a new stage
 - **WHEN** the user drags a job application card from "INTERESSADO" to "CANDIDATADO"
 - **THEN** the application status is updated and saved to reflect the new stage
+
+### Requirement: Application comments history
+The system SHALL allow users to record and view timestamped comments/notes on a specific job application.
+
+#### Scenario: User adds a new comment
+- **WHEN** the user submits a new comment text in the job application modal
+- **THEN** the comment is saved with the current timestamp and displayed in the application's comment history

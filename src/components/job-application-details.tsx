@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { JobApplication } from "@prisma/client";
+import { JobApplication, Comment } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +10,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, Wand2, ExternalLink } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Loader2, FileText, Wand2, ExternalLink, Send } from "lucide-react";
 import { generateTailoredResume } from "@/app/actions/generate";
+import { addComment } from "@/app/actions/job-application";
 import { TailoredResumeView } from "./tailored-resume";
 
 export function JobApplicationDetails({
@@ -19,12 +21,14 @@ export function JobApplicationDetails({
   isOpen,
   onClose,
 }: {
-  job: JobApplication | null;
+  job: (JobApplication & { comments: Comment[] }) | null;
   isOpen: boolean;
   onClose: () => void;
 }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [newComment, setNewComment] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   // In a real app we'd fetch the TailoredResume if job.tailoredResumeId is present.
   // For the sake of the task, we allow generation.
@@ -43,6 +47,19 @@ export function JobApplicationDetails({
       setError(err.message || "Failed to generate resume");
     } finally {
       setIsGenerating(false);
+    }
+  }
+
+  async function handleSubmitComment() {
+    if (!newComment.trim() || !job) return;
+    setIsSubmittingComment(true);
+    try {
+      await addComment(job.id, newComment);
+      setNewComment("");
+    } catch (err: any) {
+      console.error("Failed to add comment:", err);
+    } finally {
+      setIsSubmittingComment(false);
     }
   }
 
@@ -104,6 +121,44 @@ export function JobApplicationDetails({
                 No resume generated for this job yet.
               </p>
             )}
+          </div>
+
+          <div className="space-y-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+            <h4 className="font-semibold text-lg">Comments</h4>
+            <div className="max-h-48 overflow-y-auto space-y-3 pr-2">
+              {job.comments.length === 0 ? (
+                <p className="text-sm text-zinc-500">No comments yet.</p>
+              ) : (
+                job.comments.map((comment) => (
+                  <div key={comment.id} className="bg-zinc-50 dark:bg-zinc-900 p-3 rounded-md">
+                    <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
+                    <div className="text-[10px] text-zinc-400 mt-2">
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            
+            <div className="flex gap-2 items-start mt-4">
+              <Textarea
+                placeholder="Add a comment or note..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="resize-none h-20"
+              />
+              <Button 
+                onClick={handleSubmitComment} 
+                disabled={!newComment.trim() || isSubmittingComment}
+                className="mt-1"
+              >
+                {isSubmittingComment ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

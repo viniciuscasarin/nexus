@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import { JobApplication } from "@prisma/client";
+import { JobApplication, Comment } from "@prisma/client";
+
+export type JobApplicationWithComments = JobApplication & {
+  comments: Comment[];
+};
 import {
   DndContext,
   DragOverlay,
@@ -30,7 +34,7 @@ export const KANBAN_COLUMNS = [
   "CONTRATADO",
 ];
 
-function SortableItem({ item, onClick }: { item: JobApplication, onClick: () => void }) {
+function SortableItem({ item, onClick }: { item: JobApplicationWithComments, onClick: () => void }) {
   const {
     attributes,
     listeners,
@@ -64,7 +68,7 @@ function SortableItem({ item, onClick }: { item: JobApplication, onClick: () => 
   );
 }
 
-function Column({ id, items, onCardClick }: { id: string; items: JobApplication[], onCardClick: (job: JobApplication) => void }) {
+function Column({ id, items, onCardClick }: { id: string; items: JobApplicationWithComments[], onCardClick: (job: JobApplicationWithComments) => void }) {
   const { setNodeRef } = useSortable({
     id,
     data: {
@@ -97,10 +101,10 @@ function Column({ id, items, onCardClick }: { id: string; items: JobApplication[
   );
 }
 
-export function KanbanBoard({ initialApplications }: { initialApplications: JobApplication[] }) {
-  const [applications, setApplications] = useState<JobApplication[]>(initialApplications);
+export function KanbanBoard({ initialApplications }: { initialApplications: JobApplicationWithComments[] }) {
+  const [applications, setApplications] = useState<JobApplicationWithComments[]>(initialApplications);
   const [activeId, setActiveId] = useState<number | null>(null);
-  const [selectedJob, setSelectedJob] = useState<JobApplication | null>(null);
+  const [selectedJob, setSelectedJob] = useState<JobApplicationWithComments | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const sensors = useSensors(
@@ -185,8 +189,11 @@ export function KanbanBoard({ initialApplications }: { initialApplications: JobA
     });
   }
 
+  const id = React.useId();
+
   return (
     <DndContext
+      id={id}
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
