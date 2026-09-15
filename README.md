@@ -1,8 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nexus - Resume Tailor
+
+Nexus is an application designed to help you manage job applications, tailor your resumes specifically for each job description using AI, and keep track of your progress on a Kanban board.
+
+## Prerequisites
+
+- Node.js (v18 or higher)
+- npm (or yarn/pnpm)
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to run the project locally.
+
+### 1. Clone the repository
+
+```bash
+git clone git@github.com:viniciuscasarin/nexus.git
+cd nexus
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+### 3. Setup Environment Variables
+
+Copy the `.env.example` file to create your local `.env` file:
+
+```bash
+cp .env.example .env
+```
+
+Open the `.env` file and fill in the necessary values:
+- **Database**: The project uses SQLite locally. You can set the database URL to: `DATABASE_URL="file:./dev.db"`
+- **AI Providers**: Fill in at least one API key for the AI provider you want to use (Gemini, OpenAI, or Anthropic) in order to generate tailored resumes.
+
+### 4. Setup the Database
+
+Since the project uses Prisma and SQLite, run the following command to initialize the database and create the schema:
+
+```bash
+npx prisma db push
+```
+
+### 5. Run the Development Server
+
+Start the application in development mode:
 
 ```bash
 npm run dev
@@ -10,27 +58,12 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Kanban Board**: Manage your job applications and move them through different stages (Interested, Applied, Interview, Offer, Rejected, Not Considered).
+- **Job Analysis**: Analyze job descriptions and get tailored recommendations using top-tier AI models.
+- **Tailored Resumes**: Generate resumes specifically optimized for a particular job application to increase your chances of success.
