@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Activity, History } from "lucide-react";
+import { FileText, Activity, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Resume Data", href: "/resume", icon: FileText },
   { name: "Job Analysis", href: "/analysis", icon: Activity },
-  { name: "Applications", href: "/applications", icon: Activity },
+  { name: "Applications", href: "/applications", icon: Briefcase },
 ];
 
 export function Sidebar() {
