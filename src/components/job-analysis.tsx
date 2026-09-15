@@ -6,8 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeJob, JobAnalysisResult } from "@/app/actions/analyze";
 import { generateTailoredResume, TailoredResume } from "@/app/actions/generate";
+import { saveJob } from "@/app/actions/job-history";
 import { Loader2 } from "lucide-react";
 import { TailoredResumeView } from "./tailored-resume";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function JobAnalysis() {
   const [jobDescription, setJobDescription] = useState("");
@@ -16,6 +28,11 @@ export function JobAnalysis() {
   const [result, setResult] = useState<JobAnalysisResult | null>(null);
   const [tailoredResume, setTailoredResume] = useState<TailoredResume | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [jobTitle, setJobTitle] = useState("");
+  const [company, setCompany] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
@@ -42,6 +59,24 @@ export function JobAnalysis() {
       setError(err.message || "An error occurred during generation.");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!result) return;
+    setIsSaving(true);
+    try {
+      await saveJob({
+        title: jobTitle,
+        company: company,
+        description: jobDescription,
+        analysisResult: JSON.stringify(result),
+      });
+      setIsSaveDialogOpen(false);
+    } catch (err: any) {
+      setError(err.message || "Failed to save job.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -90,11 +125,55 @@ export function JobAnalysis() {
                 <p className="text-sm mt-1">{result.reasoning}</p>
               </div>
               
-              <div className="pt-4 border-t">
+              <div className="pt-4 border-t flex gap-4">
                 <Button onClick={handleGenerate} disabled={isGenerating}>
                   {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Generate Tailored Resume
                 </Button>
+
+                <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">Save to History</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Save Job Analysis</DialogTitle>
+                      <DialogDescription>
+                        Save this job and its compatibility analysis for future reference.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="title" className="text-right">
+                          Job Title
+                        </Label>
+                        <Input
+                          id="title"
+                          value={jobTitle}
+                          onChange={(e) => setJobTitle(e.target.value)}
+                          className="col-span-3"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="company" className="text-right">
+                          Company
+                        </Label>
+                        <Input
+                          id="company"
+                          value={company}
+                          onChange={(e) => setCompany(e.target.value)}
+                          className="col-span-3"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={handleSave} disabled={!jobTitle || !company || isSaving}>
+                        {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Save Job
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           )}

@@ -1,7 +1,7 @@
 ## 1. Setup
 
 - [x] 1.1 Install Vercel AI SDK dependencies (`ai`, `@ai-sdk/google`, `@ai-sdk/openai`, `@ai-sdk/anthropic`) and verify installation succeeds in package.json.
-- [ ] 1.2 Add the shadcn/ui Select component via CLI (`npx shadcn@latest add select`) and verify the files are generated in `src/components/ui`.
+- [x] 1.2 Add the shadcn/ui Select component via CLI (`npx shadcn@latest add select`) and verify the files are generated in `src/components/ui`.
 - [ ] 1.3 Setup testing framework (install Jest/Vitest and React Testing Library if not already present) and verify the test script runs successfully.
 
 ## 2. Core Implementation

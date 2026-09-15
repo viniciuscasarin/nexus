@@ -12,5 +12,5 @@
 ## 3. UI Components
 
 - [x] 3.1 Implement the Sidebar navigation component using `lucide-react` icons and active route highlighting, verifying it renders on all dashboard pages.
-- [ ] 3.2 Add a "Save to History" dialog/button in the Job Analysis component that triggers the save server action, verifying a mock job saves to the DB.
-- [ ] 3.3 Implement the History list view in `/history` that fetches from the database, verifying saved jobs are displayed correctly.
+- [x] 3.2 Add a "Save to History" dialog/button in the Job Analysis component that triggers the save server action, verifying a mock job saves to the DB.
+- [x] 3.3 Implement the History list view in `/history` that fetches from the database, verifying saved jobs are displayed correctly.
