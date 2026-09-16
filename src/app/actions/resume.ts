@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 export async function loadMasterResume(): Promise<MasterResumeFormValues | null> {
   const personalInfo = await prisma.personalInfo.findFirst();
   const experiences = await prisma.experience.findMany();
+  const voluntaryExperiences = await prisma.voluntaryExperience.findMany();
   const educations = await prisma.education.findMany();
   const skills = await prisma.skill.findMany();
 
@@ -23,6 +24,11 @@ export async function loadMasterResume(): Promise<MasterResumeFormValues | null>
       summary: personalInfo.summary || "",
     },
     experiences: experiences.map(e => ({
+      ...e,
+      startDate: e.startDate || "",
+      endDate: e.endDate || "",
+    })),
+    voluntaryExperiences: voluntaryExperiences.map(e => ({
       ...e,
       startDate: e.startDate || "",
       endDate: e.endDate || "",
@@ -64,6 +70,16 @@ export async function saveMasterResume(data: MasterResumeFormValues) {
         data: parsed.experiences.map(e => ({
           ...e,
           // Since the schema has current, we must provide it. Zod should ensure it's there.
+        })),
+      });
+    }
+
+    // Replace voluntary experiences
+    await tx.voluntaryExperience.deleteMany();
+    if (parsed.voluntaryExperiences && parsed.voluntaryExperiences.length > 0) {
+      await tx.voluntaryExperience.createMany({
+        data: parsed.voluntaryExperiences.map(e => ({
+          ...e,
         })),
       });
     }

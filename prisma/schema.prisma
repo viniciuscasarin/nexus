@@ -26,6 +26,16 @@ model Experience {
   description String
 }
 
+model VoluntaryExperience {
+  id          Int     @id @default(autoincrement())
+  company     String
+  position    String
+  startDate   String?
+  endDate     String?
+  current     Boolean @default(false)
+  description String
+}
+
 model Education {
   id           Int     @id @default(autoincrement())
   institution  String

@@ -1,9 +1,4 @@
-# resume-generation Specification
-
-## Purpose
-Generates tailored and optimized versions of the resume using AI, targeting specific job descriptions.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Generate tailored resume
 The system SHALL generate an optimized resume version by combining the master data — including voluntary experiences — and the job description analysis using an AI provider. The system MUST allow generating an ad-hoc resume without linking it to a job application, or MUST save the job application and link the generated resume. The system MUST allow the user to select the output language of the generated resume. When voluntary experiences exist in the master data, the system SHALL include a dedicated "Voluntary Experience" section in the generated resume.
@@ -23,17 +18,3 @@ The system SHALL generate an optimized resume version by combining the master da
 #### Scenario: No voluntary experience section when empty
 - **WHEN** the master resume contains no voluntary experiences and the user generates a tailored resume
 - **THEN** the generated resume does not include a "Voluntary Experience" section
-
-### Requirement: Export tailored resume
-The system SHALL allow the user to export the generated resume to a high-fidelity PDF format.
-
-#### Scenario: User exports to PDF
-- **WHEN** the user clicks the export button on a tailored resume
-- **THEN** the system generates and downloads a visually formatted PDF version
-
-### Requirement: Reuse tailored resume
-The system SHALL allow users to select a previously generated tailored resume and link it to a different job application instead of generating a new one.
-
-#### Scenario: User selects an existing resume
-- **WHEN** the user chooses an existing generated resume for a new job application
-- **THEN** the job job application is linked to that existing resume without triggering a new AI generation

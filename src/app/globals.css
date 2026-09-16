@@ -128,3 +128,43 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  @page {
+    margin: 0;
+  }
+  
+  /* Un-constrain the dialog popup so it can span multiple pages */
+  [role="dialog"], [data-slot="dialog-content"], [data-radix-portal] {
+    position: static !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    --tw-translate-x: 0 !important;
+    --tw-translate-y: 0 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+  }
+  
+  /* Hide dialog close button and backdrop */
+  [data-slot="dialog-close"], [data-slot="dialog-overlay"] {
+    display: none !important;
+  }
+  
+  /* Make sure the container handles pagination naturally */
+  .resume-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 1.5cm !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

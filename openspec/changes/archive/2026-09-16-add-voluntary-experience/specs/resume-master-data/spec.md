@@ -1,9 +1,4 @@
-# resume-master-data Specification
-
-## Purpose
-Provides a centralized repository and master form for the user's complete resume history, skills, and experiences.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Manage master resume data
 The system SHALL allow users to input, edit, and view their complete resume information, including personal details, professional experiences, voluntary experiences, and skills.

@@ -17,6 +17,7 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
   const [isPending, startTransition] = useTransition();
   const [showPersonalInfo, setShowPersonalInfo] = useState(true);
   const [showExperience, setShowExperience] = useState(true);
+  const [showVoluntaryExperience, setShowVoluntaryExperience] = useState(true);
   const [showEducation, setShowEducation] = useState(true);
   const [showSkills, setShowSkills] = useState(true);
 
@@ -25,6 +26,7 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
     defaultValues: initialData || {
       personalInfo: { fullName: "", email: "", phone: "", location: "", summary: "" },
       experiences: [],
+      voluntaryExperiences: [],
       educations: [],
       skills: [],
     },
@@ -33,6 +35,11 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
   const { fields: expFields, append: appendExp, remove: removeExp } = useFieldArray({
     control: form.control,
     name: "experiences",
+  });
+
+  const { fields: volExpFields, append: appendVolExp, remove: removeVolExp } = useFieldArray({
+    control: form.control,
+    name: "voluntaryExperiences",
   });
 
   const { fields: eduFields, append: appendEdu, remove: removeEdu } = useFieldArray({
@@ -159,6 +166,71 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
                 <Textarea className="resize-y" {...form.register(`experiences.${index}.description`)} />
                 {form.formState.errors.experiences?.[index]?.description && (
                   <p className="text-sm text-red-500">{form.formState.errors.experiences[index]?.description?.message}</p>
+                )}
+              </div>
+            </div>
+          )))}
+        </CardContent>
+        )}
+      </Card>
+
+      {/* Voluntary Experience Section */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowVoluntaryExperience(!showVoluntaryExperience)}>
+            <CardTitle>Voluntary Experience</CardTitle>
+            <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+              {showVoluntaryExperience ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </Button>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={() => appendVolExp({ company: "", position: "", current: false, description: "" })}>
+            <Plus className="w-4 h-4 mr-2" /> Add Voluntary Experience
+          </Button>
+        </CardHeader>
+        {showVoluntaryExperience && (
+        <CardContent className="space-y-6">
+          {volExpFields.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+              <p className="mb-4">No voluntary experience added yet.</p>
+              <Button type="button" variant="outline" onClick={() => appendVolExp({ company: "", position: "", current: false, description: "" })}>
+                <Plus className="w-4 h-4 mr-2" /> Add Voluntary Experience
+              </Button>
+            </div>
+          ) : (
+            volExpFields.map((field, index) => (
+            <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
+              <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-red-500" onClick={() => removeVolExp(index)}>
+                <Trash2 className="w-4 h-4" />
+              </Button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Organization / Company</Label>
+                  <Input {...form.register(`voluntaryExperiences.${index}.company`)} />
+                  {form.formState.errors.voluntaryExperiences?.[index]?.company && (
+                    <p className="text-sm text-red-500">{form.formState.errors.voluntaryExperiences[index]?.company?.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label>Role / Position</Label>
+                  <Input {...form.register(`voluntaryExperiences.${index}.position`)} />
+                  {form.formState.errors.voluntaryExperiences?.[index]?.position && (
+                    <p className="text-sm text-red-500">{form.formState.errors.voluntaryExperiences[index]?.position?.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label>Start Date</Label>
+                  <Input type="date" {...form.register(`voluntaryExperiences.${index}.startDate`)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>End Date</Label>
+                  <Input type="date" {...form.register(`voluntaryExperiences.${index}.endDate`)} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea className="resize-y" {...form.register(`voluntaryExperiences.${index}.description`)} />
+                {form.formState.errors.voluntaryExperiences?.[index]?.description && (
+                  <p className="text-sm text-red-500">{form.formState.errors.voluntaryExperiences[index]?.description?.message}</p>
                 )}
               </div>
             </div>

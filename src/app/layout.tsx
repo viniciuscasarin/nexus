@@ -28,7 +28,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <div className="flex-1 print:hidden flex flex-col">
+          {children}
+        </div>
         <Toaster />
       </body>
     </html>

@@ -223,8 +223,8 @@ export function JobApplicationDetails({
         )}
 
         {activeView === 'resume' && (
-          <div className="space-y-4 py-4">
-            <div className="flex items-center gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4">
+          <div className="space-y-4 py-4 print:py-0">
+            <div className="flex items-center gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4 print:hidden">
               <Button variant="outline" size="sm" onClick={() => setActiveView('main')}>
                 Back
               </Button>

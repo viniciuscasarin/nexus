@@ -90,6 +90,34 @@ export function TailoredResumeView({ resume }: TailoredResumeViewProps) {
           </section>
         )}
 
+        {/* Voluntary Experience */}
+        {resume.voluntaryExperience && resume.voluntaryExperience.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-xl font-bold mb-4 uppercase border-b border-gray-300 pb-1">Voluntary Experience</h2>
+            <div className="space-y-4">
+              {resume.voluntaryExperience.map((exp, i) => (
+                <div key={i}>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <h3 className="font-semibold text-lg">{exp.position}</h3>
+                    <span className="text-sm text-gray-600 font-medium">
+                      {exp.startDate} - {exp.endDate}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-baseline mb-2">
+                    <span className="italic">{exp.company}</span>
+                    <span className="text-sm text-gray-600">{exp.location}</span>
+                  </div>
+                  <ul className="list-disc pl-5 text-sm space-y-1">
+                    {exp.description.map((desc, j) => (
+                      <li key={j}>{desc}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Education */}
         {resume.education.length > 0 && (
           <section className="mb-6">
