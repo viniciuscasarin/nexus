@@ -27,7 +27,7 @@ export const educationSchema = z.object({
 
 export const skillSchema = z.object({
   name: z.string().min(1, "Skill name is required"),
-  level: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
 });
 
 export const masterResumeSchema = z.object({

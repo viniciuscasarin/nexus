@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { JobApplication, Comment } from "@prisma/client";
 import {
   Dialog,
@@ -12,7 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, FileText, Wand2, ExternalLink, Send } from "lucide-react";
-import { generateTailoredResume } from "@/app/actions/generate";
+import { generateTailoredResume, type TailoredResume } from "@/app/actions/generate";
+import { getTailoredResume } from "@/app/actions/resume";
 import { addComment } from "@/app/actions/job-application";
 import { TailoredResumeView } from "./tailored-resume";
 import { toast } from "sonner";
@@ -31,6 +32,24 @@ export function JobApplicationDetails({
   const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [activeView, setActiveView] = useState<'main' | 'description' | 'resume'>('main');
+  const [tailoredResumeContent, setTailoredResumeContent] = useState<TailoredResume | null>(null);
+  const [isLoadingResume, setIsLoadingResume] = useState(false);
+
+  useEffect(() => {
+    if (activeView === 'resume' && job?.tailoredResumeId && !tailoredResumeContent) {
+      setIsLoadingResume(true);
+      getTailoredResume(job.tailoredResumeId)
+        .then(data => {
+          setTailoredResumeContent(data);
+        })
+        .catch(err => {
+          console.error("Failed to load resume", err);
+        })
+        .finally(() => {
+          setIsLoadingResume(false);
+        });
+    }
+  }, [activeView, job?.tailoredResumeId, tailoredResumeContent]);
 
   // In a real app we'd fetch the TailoredResume if job.tailoredResumeId is present.
   // For the sake of the task, we allow generation.
@@ -212,10 +231,17 @@ export function JobApplicationDetails({
               <h2 className="text-xl font-semibold">Tailored Resume</h2>
             </div>
             {job.tailoredResumeId ? (
-              <div className="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 p-4 rounded-md flex items-center">
-                <FileText className="h-5 w-5 mr-3" />
-                <span className="font-medium">Resume generated successfully. (Refresh page if not showing)</span>
-              </div>
+              isLoadingResume ? (
+                <div className="flex items-center justify-center p-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+                </div>
+              ) : tailoredResumeContent ? (
+                <TailoredResumeView resume={tailoredResumeContent} />
+              ) : (
+                <div className="bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 p-4 rounded-md flex items-center">
+                  <span className="font-medium">Failed to load resume content.</span>
+                </div>
+              )
             ) : (
               <p className="text-sm text-zinc-500">
                 No resume generated for this job yet.

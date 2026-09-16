@@ -116,12 +116,11 @@ export function TailoredResumeView({ resume }: TailoredResumeViewProps) {
         {resume.skills.length > 0 && (
           <section className="mb-6">
             <h2 className="text-xl font-bold mb-4 uppercase border-b border-gray-300 pb-1">Skills</h2>
-            <div className="text-sm flex flex-wrap gap-x-4 gap-y-2">
-              {/* Simple grouping could be done here, for now just list them */}
-              {Array.from(new Set(resume.skills.map(s => s.category))).map(category => (
-                <div key={category} className="w-full">
-                  <span className="font-bold">{category}: </span>
-                  <span>{resume.skills.filter(s => s.category === category).map(s => s.name).join(", ")}</span>
+            <div className="text-sm space-y-2">
+              {resume.skills.map((skill, i) => (
+                <div key={i}>
+                  <span className="font-bold">{skill.name}: </span>
+                  <span>{skill.description}</span>
                 </div>
               ))}
             </div>

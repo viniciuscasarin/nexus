@@ -305,7 +305,7 @@ export function JobAnalysis() {
                         View Generated Resume
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-4xl h-[90vh] overflow-y-auto">
+                    <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto break-words overflow-x-hidden !top-[5vh] !translate-y-0">
                       <DialogHeader>
                         <DialogTitle>Tailored Resume</DialogTitle>
                       </DialogHeader>

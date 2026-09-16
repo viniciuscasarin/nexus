@@ -117,7 +117,15 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
         </CardHeader>
         {showExperience && (
         <CardContent className="space-y-6">
-          {expFields.map((field, index) => (
+          {expFields.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+              <p className="mb-4">No experience added yet.</p>
+              <Button type="button" variant="outline" onClick={() => appendExp({ company: "", position: "", current: false, description: "" })}>
+                <Plus className="w-4 h-4 mr-2" /> Add Experience
+              </Button>
+            </div>
+          ) : (
+            expFields.map((field, index) => (
             <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
               <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-red-500" onClick={() => removeExp(index)}>
                 <Trash2 className="w-4 h-4" />
@@ -154,7 +162,7 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
                 )}
               </div>
             </div>
-          ))}
+          )))}
         </CardContent>
         )}
       </Card>
@@ -174,7 +182,15 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
         </CardHeader>
         {showEducation && (
         <CardContent className="space-y-6">
-          {eduFields.map((field, index) => (
+          {eduFields.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+              <p className="mb-4">No education added yet.</p>
+              <Button type="button" variant="outline" onClick={() => appendEdu({ institution: "", degree: "" })}>
+                <Plus className="w-4 h-4 mr-2" /> Add Education
+              </Button>
+            </div>
+          ) : (
+            eduFields.map((field, index) => (
             <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
               <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-red-500" onClick={() => removeEdu(index)}>
                 <Trash2 className="w-4 h-4" />
@@ -194,7 +210,7 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
                 </div>
               </div>
             </div>
-          ))}
+          )))}
         </CardContent>
         )}
       </Card>
@@ -208,27 +224,41 @@ export function MasterForm({ initialData }: { initialData?: MasterResumeFormValu
               {showSkills ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </Button>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => appendSkill({ name: "" })}>
+          <Button type="button" variant="outline" size="sm" onClick={() => appendSkill({ name: "", description: "" })}>
             <Plus className="w-4 h-4 mr-2" /> Add Skill
           </Button>
         </CardHeader>
         {showSkills && (
         <CardContent className="space-y-6">
-          {skillFields.map((field, index) => (
-            <div key={field.id} className="flex gap-4 items-end relative">
-              <div className="flex-1 space-y-2">
-                <Label>Skill Name</Label>
-                <Input {...form.register(`skills.${index}.name`)} />
-              </div>
-              <div className="w-1/3 space-y-2">
-                <Label>Level (Optional)</Label>
-                <Input {...form.register(`skills.${index}.level`)} />
-              </div>
-              <Button type="button" variant="ghost" size="icon" className="text-red-500 mb-1" onClick={() => removeSkill(index)}>
-                <Trash2 className="w-4 h-4" />
+          {skillFields.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+              <p className="mb-4">No skills added yet.</p>
+              <Button type="button" variant="outline" onClick={() => appendSkill({ name: "", description: "" })}>
+                <Plus className="w-4 h-4 mr-2" /> Add Skill
               </Button>
             </div>
-          ))}
+          ) : (
+            skillFields.map((field, index) => (
+            <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
+              <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 text-red-500" onClick={() => removeSkill(index)}>
+                <Trash2 className="w-4 h-4" />
+              </Button>
+              <div className="space-y-2 pr-8">
+                <Label>Skill</Label>
+                <Input {...form.register(`skills.${index}.name`)} />
+                {form.formState.errors.skills?.[index]?.name && (
+                  <p className="text-sm text-red-500">{form.formState.errors.skills[index]?.name?.message}</p>
+                )}
+              </div>
+              <div className="space-y-2 pr-8">
+                <Label>Description</Label>
+                <Textarea className="resize-y" {...form.register(`skills.${index}.description`)} />
+                {form.formState.errors.skills?.[index]?.description && (
+                  <p className="text-sm text-red-500">{form.formState.errors.skills[index]?.description?.message}</p>
+                )}
+              </div>
+            </div>
+          )))}
         </CardContent>
         )}
       </Card>

@@ -35,7 +35,7 @@ export interface TailoredResume {
   }[];
   skills: {
     name: string;
-    category: string;
+    description: string;
   }[];
 }
 
@@ -68,7 +68,7 @@ const TailoredResumeSchema = z.object({
   })),
   skills: z.array(z.object({
     name: z.string(),
-    category: z.string(),
+    description: z.string(),
   })),
 });
 
@@ -117,7 +117,8 @@ Generate a highly tailored and optimized resume for this specific job descriptio
 Rules:
 1. DO NOT invent any new experiences, jobs, degrees, or skills that are not present in the master resume.
 2. Select and highlight the most relevant experiences and skills for the job description.
-3. You may rephrase bullet points to emphasize impact and relevance to the job description, but do not exaggerate or lie.${languageInstruction}
+3. For each skill, use the provided description in the master resume to understand exactly how the candidate used it, and synthesize a concise, tailored description of the skill for the generated resume that emphasizes its relevance to the job.
+4. You may rephrase bullet points to emphasize impact and relevance to the job description, but do not exaggerate or lie.${languageInstruction}
 
 Master Resume:
 ${JSON.stringify(masterData, null, 2)}

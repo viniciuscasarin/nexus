@@ -35,7 +35,7 @@ export async function loadMasterResume(): Promise<MasterResumeFormValues | null>
     })),
     skills: skills.map(s => ({
       ...s,
-      level: s.level || "",
+      description: s.description,
     })),
   };
 }
@@ -87,4 +87,23 @@ export async function saveMasterResume(data: MasterResumeFormValues) {
 
   revalidatePath("/");
   return { success: true };
+}
+
+import type { TailoredResume } from "./generate";
+
+export async function getTailoredResume(id: number): Promise<TailoredResume | null> {
+  const record = await prisma.tailoredResume.findUnique({
+    where: { id }
+  });
+  
+  if (!record) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(record.content) as TailoredResume;
+  } catch (error) {
+    console.error("Failed to parse tailored resume content:", error);
+    return null;
+  }
 }

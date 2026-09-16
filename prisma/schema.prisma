@@ -36,9 +36,9 @@ model Education {
 }
 
 model Skill {
-  id    Int     @id @default(autoincrement())
-  name  String
-  level String?
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
 }
 
 model JobApplication {
